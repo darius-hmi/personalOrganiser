@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %} 
+{% block title %}Home Page{% endblock %} 
+{% block content %}
+
+<style>
+  .card-body p {
+  white-space: pre-line;
+  }
+</style>
+
+
+<div class="container mt-3">
+  {% for post in posts %}
+    <div class="card mb-3" style="width: 100%;">
+      <div class="card-header"><strong>@{{ post.author.username }}</strong></div>
+      <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text">{{ post.description|linebreaks }}</p>
+        <div class="d-flex justify-content-between">
+          {% if user == post.author or perms.main.delete_post %}
+            <form method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger" name="post-id" value="{{ post.id }}">Delete</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+      <div class="card-footer text-muted">{{ post.created_at }}</div>
+    </div>
+  {% empty %}
+    <p>No posts yet :(</p>
+  {% endfor %}
+</div>
+{% endblock %}

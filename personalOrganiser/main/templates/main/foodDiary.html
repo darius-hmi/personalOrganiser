@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+{% block title %}Food Diary{% endblock %}
+{% block content %}
+<form method="post" action="/foodDiary">
+    {% csrf_token %}{{form.as_p}}
+    <input type="hidden" name="form-type" value="main-form">
+    <button type="submit" name="save">Go</button>
+</form>
+<table style="width:100%">
+    <tr>
+      <th>Food</th>
+      <th>Calories</th>
+      <th>Protein</th>
+      <th>Date and Time</th>
+      <th>
+        {% if form.cleaned_data.date %}
+          <a href="{% url 'add_food_with_date' date=form.cleaned_data.date %}" class="btn btn-success">Add Food Entry</a>
+        {% endif %}
+      </th>
+    </tr>
+    {% for food in todaysFoods %}
+    <tr>
+      <td>{{food.name}}</td>
+      <td>{{food.calories}}</td>
+      <td>{{food.protein}}</td>
+      <td>{{food.created_at}}</td>
+      <td>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form-type" value="delete-form">
+            <button type="submit" class="btn btn-danger" name="food-id" value="{{food.id}}">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <th>Total</th>
+        <th>{{totalCalories}}</th>
+        <th>{{totalProtein}}</th>
+    </tr>
+</table>
+{% endblock %}

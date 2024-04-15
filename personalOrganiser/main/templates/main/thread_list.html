@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+{% block title %}Direct Messages{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-md-9">
+        <h1>Direct Messages</h1>
+        <ul>
+            {% for thread in threads %}
+                {% with other_participant=thread.participants.first %}
+                    <li><a href="{% url 'thread_detail' thread.id %}">{{ other_participant }}</a></li>
+                {% endwith %}
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-3 text-right">
+        <a href="{% url 'initiate_dm' %}" class="btn btn-primary">New</a>
+    </div>
+</div>
+{% endblock %}
