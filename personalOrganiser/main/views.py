@@ -17,7 +17,7 @@ def home(request):
         if post_id:
             post = get_object_or_404(Post, id=post_id)
             # Check if the logged-in user is the author or has permission to delete the post
-            if request.user == post.author or request.user.has_perm('main.delete_post'):
+            if request.user == post.author:
                 post.delete()
     posts = Post.objects.all()
     return render(request, 'main/home.html', {"posts": posts}) 
@@ -180,6 +180,20 @@ def viewToDoList(request):
     toDoItems = toDoList.objects.filter(author=author)
     # Tested the below def so it sends an email reminder to the 
     #send_mail_test(author)
+    form_type = request.POST.get('form-type')
+    if form_type == 'delete-form':
+        todo_id_to_delete = request.POST.get('todo-id')
+        if todo_id_to_delete:
+            todo_to_delete = toDoList.objects.filter(id=todo_id_to_delete).first()
+            author = request.user
+            toDoItems = toDoList.objects.filter(author=author)
+            if todo_to_delete:
+                todo_to_delete.delete()
+                toDoItems = toDoList.objects.filter(author=author)
+                # Redirect to refresh the page without the deleted entry
+                return render(request, 'main/toDoList.html', {'toDoItems':toDoItems})
+
+
     return render(request, 'main/toDoList.html', {'toDoItems':toDoItems})
 
 
@@ -283,3 +297,4 @@ def thread_detail_view(request, thread_id):
             message.thread = thread
             message.save()
             return redirect('thread_detail', thread_id=thread.id)
+    return render(request, 'main/thread_detail.html', {'thread': thread, 'messages': messages, 'form': form})

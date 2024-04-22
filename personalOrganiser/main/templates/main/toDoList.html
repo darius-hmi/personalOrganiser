@@ -14,6 +14,7 @@
       <td>
         <form method="post">
             {% csrf_token %}
+            <input type="hidden" name="form-type" value="delete-form">
             <button type="submit" class="btn btn-danger" name="todo-id" value="{{todo.id}}">Delete</button>
         </form>
       </td>
