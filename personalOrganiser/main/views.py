@@ -251,4 +251,6 @@ def thread_detail_view(request, thread_id):
             message.thread = thread
             message.save()
             return redirect('thread_detail', thread_id=thread.id)
-    return render(request, 'main/thread_detail.html', {'thread': thread, 'messages': messages, 'form': form})
+
+
+#hello
