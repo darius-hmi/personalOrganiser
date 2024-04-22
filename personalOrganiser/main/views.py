@@ -120,14 +120,31 @@ def exerciseDiary(request):
     if request.method == 'POST':
         form = datePicker(request.POST)
         if form.is_valid():
-            author = request.user
+            # Handle datePicker form submission
             d = form.cleaned_data['date']
+            author = request.user
             todaysExercises = Exercise.objects.filter(author=author, created_at__date=d)
             return render(request, 'main/exerciseDiary.html', {'form':form, 'todaysExercises':todaysExercises})
+
+        # Handle delete action
+        form_type = request.POST.get('form-type')
+        if form_type == 'delete-form':
+            exercise_id_to_delete = request.POST.get('exercise-id')
+            if exercise_id_to_delete:
+                exercise_to_delete = Exercise.objects.filter(id=exercise_id_to_delete).first()
+                exercise = get_object_or_404(Exercise, id=exercise_id_to_delete)
+                d = exercise.created_at.date()
+                author = request.user
+                todaysExercises = Exercise.objects.filter(author=author, created_at__date=d)
+                if exercise_to_delete:
+                    exercise_to_delete.delete()
+                    todaysExercises = Exercise.objects.filter(author=author, created_at__date=d)
+                    # Redirect to refresh the page without the deleted entry
+                    return render(request, 'main/exerciseDiary.html', {'form':form, 'todaysExercises':todaysExercises})
     else:
         form = datePicker()
-        return render(request, 'main/exerciseDiary.html', {'form':form})
-    
+
+    return render(request, 'main/exerciseDiary.html', {'form': form})
 
 @login_required(login_url='/login')
 def add_Exercise(request):
@@ -194,6 +211,21 @@ def add_food(request, date):
 
     return render(request, 'main/add_food_with_date.html', {'form': form, 'date': date})
 
+@login_required(login_url='/login')
+def add_exerciseToDate(request, date):
+    date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+    form = ExerciseForm(request.POST)
+    if form.is_valid():
+        exercise = form.save(commit=False)
+        exercise.author = request.user
+        exercise.created_at = datetime.combine(date_obj, datetime.min.time())
+        exercise.save()
+        return redirect('exerciseDiary')
+    else:
+        form = ExerciseForm()
+
+    return render(request, 'main/add_exercise_with_date.html', {'form': form, 'date': date})
+
 
 #The below definition is sending an email to the yahoo account when used. Need to use Celery to send automatically
 def send_mail_test(author):
@@ -251,6 +283,3 @@ def thread_detail_view(request, thread_id):
             message.thread = thread
             message.save()
             return redirect('thread_detail', thread_id=thread.id)
-
-
-#hello

@@ -13,7 +13,11 @@
       <th>Sets</th>
       <th>reps</th>
       <th>Date and Time</th>
-      <th></th>
+      <th>
+        {% if form.cleaned_data.date %}
+          <a href="{% url 'add_exercise_with_date' date=form.cleaned_data.date %}" class="btn btn-success">Add Exercise Entry</a>
+        {% endif %}
+      </th>
     </tr>
     {% for exercise in todaysExercises %}
     <tr>
@@ -26,6 +30,7 @@
       <td>
         <form method="post">
             {% csrf_token %}
+            <input type="hidden" name="form-type" value="delete-form">
             <button type="submit" class="btn btn-danger" name="exercise-id" value="{{exercise.id}}">Delete</button>
         </form>
       </td>

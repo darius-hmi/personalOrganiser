@@ -43,7 +43,7 @@ class Exercise(models.Model):
         max_length=10,
         choices = muscleGroup.choices
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.name
 

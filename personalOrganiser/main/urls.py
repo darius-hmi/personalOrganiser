@@ -14,6 +14,7 @@ urlpatterns = [
     path('addToDoList', views.add_toDoList, name='add_toDo'),
     path('toDoList', views.viewToDoList, name='toDoList'),
     path('foodDiary/add/<str:date>/', views.add_food, name='add_food_with_date'),
+    path('exerciseDiary/add/<str:date>/', views.add_exerciseToDate, name='add_exercise_with_date'),
     path('threads/', views.thread_list_view, name='thread_list'),
     path('thread/<int:thread_id>/', views.thread_detail_view, name='thread_detail'),
     path('dm/<int:recipient_id>/', views.initiate_dm, name='initiate_dm'),
