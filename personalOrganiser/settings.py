@@ -28,7 +28,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
@@ -84,7 +83,7 @@ WSGI_APPLICATION = 'personalOrganiser.wsgi.application'
 
 
 
-if DEVELOPMENT_MODE is True:
+if DEBUG is True:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
