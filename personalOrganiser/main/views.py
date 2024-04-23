@@ -242,17 +242,17 @@ def add_exerciseToDate(request, date):
 
 
 #The below definition is sending an email to the yahoo account when used. Need to use Celery to send automatically
-def send_mail_test(author):
-    tomorrow = timezone.now() + timezone.timedelta(days=1)
-    tasks_due_tomorrow = toDoList.objects.filter(dueDate__range=(tomorrow, tomorrow + timezone.timedelta(days=1)), author=author)
+# def send_mail_test(author):
+#     tomorrow = timezone.now() + timezone.timedelta(days=1)
+#     tasks_due_tomorrow = toDoList.objects.filter(dueDate__range=(tomorrow, tomorrow + timezone.timedelta(days=1)), author=author)
 
-    for task in tasks_due_tomorrow:
-        subject =  'Test Email'
-        message = task.task + " is due tomorrow!"
-        from_email = ''
-        recipient_list = ['']
+#     for task in tasks_due_tomorrow:
+#         subject =  'Test Email'
+#         message = task.task + " is due tomorrow!"
+#         from_email = ''
+#         recipient_list = ['']
 
-        send_mail(subject, message, from_email, recipient_list)
+#         send_mail(subject, message, from_email, recipient_list)
 
 
 @login_required
