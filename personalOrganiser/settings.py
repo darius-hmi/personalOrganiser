@@ -81,19 +81,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'personalOrganiser.wsgi.application'
 
-
-
-if DEBUG is True:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        }
-    }
-elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
-    if os.getenv("DB_NAME", None) is None:
-        raise Exception("DB_NAME environment variable not defined")
-    DATABASES = {
+DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
@@ -103,6 +91,29 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
         'PORT': '',
         }
     }
+
+
+
+# if DEBUG is True:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+#         }
+#     }
+# elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+#     if os.getenv("DB_NAME", None) is None:
+#         raise Exception("DB_NAME environment variable not defined")
+#     DATABASES = {
+#         'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME'),
+#         'USER': os.getenv('DB_USER'),
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': 'localhost',
+#         'PORT': '',
+#         }
+#     }
 
 
 
