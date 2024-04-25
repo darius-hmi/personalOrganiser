@@ -1,0 +1,50 @@
+.message-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-sender {
+    background-color: #adaef1; /* Light green for sender's messages */
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+    align-self: flex-end; /* Aligns sender's messages to the right */
+    margin-bottom: 5px; /* Adds space between messages */
+}
+
+.message-receiver {
+    background-color: #f0b3f0; /* Light grey for receiver's messages */
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+    align-self: flex-start; /* Aligns receiver's messages to the left */
+    margin-bottom: 5px; /* Adds space between messages */
+}
+
+.message-input-container {
+    display: flex;
+    align-items: center; /* Align items vertically in the center */
+}
+
+.message-input-container input[type="text"],
+.message-input-container textarea {
+    flex-grow: 1; /* Grow to take up remaining space */
+    margin-right: 10px; /* Add spacing between input and button */
+    height: 40px; /* Set the height as needed */
+}
+
+.message-input-container button {
+    flex-shrink: 0; /* Prevent button from shrinking */
+    height: 40px; /* Set the height as needed */
+}
+
+.message-background-container {
+    /* Add styles for the container, like width, height, etc. */
+    background-image: url('/static/images/msg_bckgd.jpg');
+    background-size: cover; /* Adjust the background size */
+    background-position: center; /* Center the background image */
+}
+
+/* Add other CSS styles for your elements */

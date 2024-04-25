@@ -1,16 +1,22 @@
 {% extends 'main/base.html' %}
-{% block title %}To Do List{% endblock %}
-{% load crispy_forms_tags %}
+{% block title %}Conversation{% endblock %}
 {% block content %}
-<h1>Conversation</h1>
-<ul>
-    {% for message in messages %}
-    <li>{{ message.sender }}: {{ message.content }}</li>
-    {% endfor %}
-</ul>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Send</button>
-</form>
+<div class="message-background-container">
+    <div class="message-container">
+        {% for message in messages %}
+        {% if message.sender == request.user %}
+        <div class="message-sender">{{ message.sender }}: {{ message.content }}</div>
+        {% else %}
+        <div class="message-receiver">{{ message.sender }}: {{ message.content }}</div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="message-input-container">
+            {{ form.content }}
+            <button type="submit">Send</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
