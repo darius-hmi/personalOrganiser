@@ -8,7 +8,8 @@ from django.db.models import Sum
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.http import Http404
+from django.http import Http404, JsonResponse
+import os, requests
 
 @login_required(login_url='/login')
 def home(request):
@@ -59,19 +60,59 @@ def create_post(request):
     
     return render(request, 'main/create_post.html', {'form':form})
 
+
 @login_required(login_url='/login')
 def create_food(request):
+    form = FoodForm()
+    food_info = None
+    error_message = None
+
     if request.method == 'POST':
-        form = FoodForm(request.POST)
-        if form.is_valid():
-            food = form.save(commit=False)
-            food.author = request.user
-            food.save()
-            return redirect('/home')
+        action = request.POST.get('action')
+
+        if action == 'create_food':
+            # Handle the create food form
+            form = FoodForm(request.POST)
+            if form.is_valid():
+                food = form.save(commit=False)
+                food.author = request.user
+                food.save()
+                return redirect('create_food')
+        
+        elif action == 'food_lookup':
+            # Handle the food lookup form
+            form = FoodForm()
+            food_id = request.POST.get('food_id')
+            if food_id:
+                api_url = f'https://api.edamam.com/api/food-database/v2/parser?ingr={food_id}&app_id={os.getenv("api_id")}&app_key={os.getenv("api_key")}'
+                response = requests.get(api_url)
+
+                if response.status_code == 200:
+                    data = response.json()
+                    if 'parsed' in data and data['parsed']:
+                        food_info = {
+                            'name': data['parsed'][0]['food']['label'],
+                            'calories': data['parsed'][0]['food']['nutrients']['ENERC_KCAL'],
+                            'protein': data['parsed'][0]['food']['nutrients']['PROCNT'],
+                            # Add other relevant nutrient information here
+                        }
+                        
+                        if 'hints' in data and data['hints']:
+                            image_url = data['hints'][0]['food']['image']
+                            food_info['image_url'] = image_url
+                    else:
+                        error_message = 'No food information found'
+
+                else:
+                    error_message = 'Failed to fetch food information'
+
+            else:
+                error_message = 'Please provide a food ID'
     else:
         form = FoodForm()
-    
-    return render(request, 'main/create_food.html', {'form':form})
+
+    return render(request, 'main/create_food.html', {'form': form, 'food_info': food_info, 'error_message': error_message})
+
 
 
 @login_required(login_url='/login')
@@ -298,3 +339,6 @@ def thread_detail_view(request, thread_id):
             message.save()
             return redirect('thread_detail', thread_id=thread.id)
     return render(request, 'main/thread_detail.html', {'thread': thread, 'messages': messages, 'form': form})
+
+
+#end of the code

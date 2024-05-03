@@ -2,11 +2,43 @@
 {% block title %}Add food{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
-<form method="POST">
-    {% csrf_token %}
-    <table class="form-table" style="width: 100%;">
-        {{form.as_table}}
-    </table>
-    <button type="submit" class="btn btn-success">Post</button>
-</form>
+<div class="row">
+    <div class="col-md-6">
+        <h2>Add Food</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <table class="form-table" style="width: 100%;">
+                {{form.as_table}}
+            </table>
+            <button type="submit" name="action" value="create_food" class="btn btn-success">Post</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h2>Food Lookup</h2>
+        <form id="food-lookup-form" method="post">
+            {% csrf_token %}
+            <label for="food_id">Enter Food Name:</label>
+            <input type="text" name="food_id" id="food_id">
+            <button type="submit" name="action" value="food_lookup">Lookup</button>
+        </form>
+
+        {% if food_info %}
+            <h3>Food Information: (per 100g/100ml)</h3>
+            <ul>
+                <li>Name: {{ food_info.name }}</li>
+                <li>Calories: {{ food_info.calories }} kcal</li>
+                <li>Protein: {{ food_info.protein }} g</li>
+                <!-- Add other relevant nutrient information here -->
+            </ul>
+            {% if food_info.image_url %}
+                <img src="{{ food_info.image_url }}" alt="{{ food_info.name }}">
+            {% endif %}
+        {% endif %}
+
+        {% if error_message %}
+            <p>{{ error_message }}</p>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}
