@@ -47,4 +47,104 @@
     background-position: center; /* Center the background image */
 }
 
+.container {
+    width: 100%;
+}
+.card-body p {
+    white-space: pre-line;
+}
+.link-section {
+    border-radius: 10px;
+    margin-bottom: 20px; /* Add margin between sections */
+    padding: 0px;
+    width: 100%; /* Make the link section full width */
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center align the items */
+    flex-direction: column; /* Align items vertically */
+    text-align: center;
+}
+.food-section, .exercise-section, .todo-section, .posts-section {
+    text-align: center; /* Center align text */
+    margin-bottom: 20px; /* Add margin between sections */
+}
+.food-section {
+    background-color: #99114c; /* Light orange background */
+    display: flex;
+    align-items: center;
+}
+.exercise-section {
+    background-color: #6C5B7B; /* Light purple background */
+    display: flex;
+    align-items: center;
+}
+.todo-section {
+    background-color: #C06C84; /* Light pink background */
+    display: flex;
+    align-items: center;
+}
+.post-section {
+    background-color: #355C7D; /* Light blue background */
+    display: flex;
+    align-items: center;
+}
+
+.section-heading {
+    margin-top: 50px; /* Adjust margin-top as needed */
+    margin-bottom: 50px;
+    text-align: center; /* Align text to the center */
+}
+
+.section-heading h1 {
+    font-size: 40px; /* Adjust font size as needed */
+}
+
+
+.food-image {
+    margin-right: auto; /* Move the image to the right */
+    width: 30%; /* Adjust the size of the image as needed */
+    margin-left: 20px; /* Add space between image and content */
+}
+
+.food-content {
+    width: 70%; /* Adjust the width of the content */
+}
+
+.exercise-image {
+    margin-left: auto; /* Move the image to the right */
+    width: 30%; /* Adjust the size of the image as needed */
+    margin-right: 20px; /* Add space between image and content */
+}
+
+.exercise-content {
+width: 70%; /* Adjust the width of the content */
+}
+
+.todo-image {
+    margin-right: auto; /* Move the image to the right */
+    width: 30%; /* Adjust the size of the image as needed */
+    margin-left: 20px; /* Add space between image and content */
+}
+
+.todo-content {
+    width: 70%; /* Adjust the width of the content */
+}
+
+.post-image {
+    margin-left: auto; /* Move the image to the right */
+    width: 30%; /* Adjust the size of the image as needed */
+    margin-right: 20px; /* Add space between image and content */
+}
+
+.post-content {
+    width: 70%; /* Adjust the width of the content */
+}
+
+.full-width {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+body {
+    font-family: "Century Gothic", serif;
+}
 /* Add other CSS styles for your elements */
