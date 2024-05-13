@@ -40,8 +40,8 @@ class datePicker(forms.Form):
 class ExerciseForm(forms.ModelForm):
     class Meta:
         model = Exercise
-        fields = ['name', 'muscle', 'weight', 'sets', 'reps']
-    
+        fields = ['muscle','name', 'weight', 'sets', 'reps']
+
 
 class MessageForm(forms.ModelForm):
     class Meta:
