@@ -2,6 +2,8 @@
 {% block title %}Add Exercise{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
+{%load static%}
+<script src="{% static 'fullcalendar/dist/index.global.min.js' %}"></script>
 <form method="POST">
     {% csrf_token %}
     <table class="form-table" style="width: 100%;">
@@ -9,6 +11,11 @@
     </table>
     <button type="submit" class="btn btn-success">Add</button>
 </form>
+
+<!-- Calendar View Section -->
+<div id="calendar"></div>
+
+
 <script>
     // Define arrays in the global scope
     var chestExercises = [
@@ -33,7 +40,8 @@
         'Front Raises',
         'Rear Delt Machine',
         'Rear Delt Dumbbell',
-        'Machine shoulder press'
+        'Machine shoulder press',
+        'Traps raises'
     ];
 
     var legExercises = [
@@ -66,7 +74,8 @@
         'Cable tricep extension',
         'Bar tricep extension',
         'Overhead extension',
-        'Dips'
+        'Dips',
+        'underhand lat pulldown'
     ];
 
     document.getElementById('id_name').addEventListener('change', function() {
@@ -162,7 +171,54 @@
         } else {
             return ''; // Default to empty string if muscle group is unknown
         }
-    }
+    };
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth', // Display month view initially
+            events: '/get_exercise_data/', // URL to fetch exercise data
+            eventDidMount: function(info) {
+                // Customize event rendering if needed
+            },
+            datesSet: function(info) {
+                // Called when the calendar view changes
+                // Update the muscle names for each day in the current view
+                var start = info.view.activeStart;
+                var end = info.view.activeEnd;
+                var calendarApi = info.view.calendar;
+
+                // Fetch muscle names for the current view range
+                fetch('/get_exercise_data/?start=' + start.toISOString() + '&end=' + end.toISOString())
+                .then(response => response.json())
+                .then(data => {
+                    // Loop through each day in the view range
+                    var dates = calendarApi.getCurrentData().dateProfile.activeRange;
+                    if (Array.isArray(dates)) { // Check if dates is an array
+                        dates.forEach(function(date) {
+                            var muscles = data[date.toISOString().substring(0, 10)] || [];
+                            var content = muscles.join('<br>'); // Join muscle names with line breaks
+                            var dayCell = calendarApi.getDateCell(date);
+                            var muscleNamesContainer = dayCell.querySelector('.muscle-names');
+                            if (!muscleNamesContainer) {
+                                muscleNamesContainer = document.createElement('div');
+                                muscleNamesContainer.classList.add('muscle-names');
+                                dayCell.appendChild(muscleNamesContainer);
+                            }
+                            muscleNamesContainer.innerHTML = content;
+                        });
+                    }
+                });
+            }
+        });
+        calendar.render();
+    });
+
+    
+
+
+    
+
 </script>
 
 

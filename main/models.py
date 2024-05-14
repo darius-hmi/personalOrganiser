@@ -50,6 +50,7 @@ class Exercise(models.Model):
         rearDeltMachine = 'Rear Delt Machine','Rear Delt Machine',
         rearDeltDB = 'Rear Delt Dumbbell','Rear Delt Dumbbell',
         machineShoulderPress = 'Machine shoulder press','Machine shoulder press',
+        trapsRaises = 'Traps raises','Traps raises',
     
         bentOverRowBB = 'Barbell Bent over row','Barbell Bent over row',
         ropePulldown = 'Rope Pulldown','Rope Pulldown',
@@ -73,6 +74,7 @@ class Exercise(models.Model):
         hammerCurls = 'Hamemr curls','Hamemr curls',
         bicepCurlCable = 'Cable bicep curls', 'Cable bicep curls', 
         hammerCurlsCable = 'Cable hammer curl','Cable hammer curl',
+        underhandLatPulldown = 'underhand lat pulldown','underhand lat pulldown',
 
         tricepExtentionCable = 'Cable tricep extension','Cable tricep extension',
         tricepExtensionBar = 'Bar tricep extension','Bar tricep extension',

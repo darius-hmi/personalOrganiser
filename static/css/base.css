@@ -174,5 +174,41 @@ body {
         order: 1; /* Set the order of the image to 1, making it appear above the content */
     }
 }
+/* Adjust font size of day names */
+.fc-daygrid-day-number {
+    font-size: 24px; /* Adjust as needed */
+}
+.fc-daygrid-day-events {
+    min-height: 100px !important;/* Adjust as needed */
+    
+}
+.fc-event-title-container {
+    background-color: #99114c; /* Adjust as needed */
+    padding: 2px;
+    text-align: center;
+}
+.fc-event-title {
+    font-size: 20px; /* Adjust as needed */
+}
+/* Make the calendar view smaller */
+#calendar {
+    width: 65%; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the calendar */
+}
+/* Media query for smaller screens */
+@media only screen and (max-width: 768px) {
+    #calendar {
+        width: 100%; /* Full width on small screens */
+    }
+    .fc-daygrid-day-number {
+        font-size: 12px; /* Adjust as needed */
+    }
+    .fc-event-title {
+        font-size: 10px; /* Adjust as needed */
+    }
+}
+
+
+
 
 /* Add other CSS styles for your elements */

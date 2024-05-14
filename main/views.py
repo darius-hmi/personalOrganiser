@@ -4,12 +4,13 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from .models import Post, Food, Exercise, toDoList, Message, Thread
 from datetime import datetime, time
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.http import Http404, JsonResponse
 import os, requests
+from django.db.models.functions import TruncDate
 
 @login_required(login_url='/login')
 def home(request):
@@ -195,11 +196,31 @@ def add_Exercise(request):
             exercise = form.save(commit=False)
             exercise.author = request.user
             exercise.save()
-            return redirect('/home')
+            return redirect('/addExercise')
     else:
         form = ExerciseForm()
     
-    return render(request, 'main/add_exercise.html', {'form':form})
+    # Fetch exercise data grouped by date and muscle
+    exercise_data = Exercise.objects.annotate(date=TruncDate('created_at')).values('date', 'muscle').annotate(count=Count('muscle'))
+    
+    return render(request, 'main/add_exercise.html', {'form':form, 'exercise_data': exercise_data})
+
+
+@login_required(login_url='/login')
+def get_exercise_data(request):
+    exercise_data = Exercise.objects.annotate(date=TruncDate('created_at')).values('date', 'muscle').annotate(count=Count('muscle'))
+
+    events = []
+    for item in exercise_data:
+        event = {
+            'title': item['muscle'],
+            'start': item['date'].strftime('%Y-%m-%d'),  # Convert date to string
+        }
+        events.append(event)
+
+    return JsonResponse(events, safe=False)
+
+
 
 @login_required(login_url='/login')
 def add_toDoList(request):

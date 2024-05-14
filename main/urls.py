@@ -19,4 +19,5 @@ urlpatterns = [
     path('thread/<int:thread_id>/', views.thread_detail_view, name='thread_detail'),
     path('dm/<int:recipient_id>/', views.initiate_dm, name='initiate_dm'),
     path('initiate-dm/', views.initiate_dm, name='initiate_dm'),
+    path('get_exercise_data/', views.get_exercise_data, name='get_exercise_data'),
 ]
