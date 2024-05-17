@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 {% block title %}Exercise Diary{% endblock %}
 {% block content %}
-<form method="post" action="/exerciseDiary">
+<form method="post" action="/exerciseDiary" id="exercise-diary-form">
     {% csrf_token %}{{form.as_p}}
     <button type="submit" name="save">Go</button>
 </form>
@@ -37,4 +37,22 @@
     </tr>
     {% endfor %}
 </table>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Retrieve the selected date from sessionStorage
+    var selectedDate = sessionStorage.getItem('selectedDate');
+    if (selectedDate) {
+        var formattedDate = selectedDate.split('/').reverse().join('-');
+        document.getElementById('id_date').value = formattedDate;
+        // Clear the selected date from sessionStorage
+        sessionStorage.removeItem('selectedDate');
+        // Submit the form
+        document.getElementById('exercise-diary-form').submit();
+    }
+});
+
+
+</script>
 {% endblock %}

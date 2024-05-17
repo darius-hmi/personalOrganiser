@@ -3,7 +3,7 @@ from .forms import RegisterForm, PostForm, FoodForm, datePicker, ExerciseForm, t
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from .models import Post, Food, Exercise, toDoList, Message, Thread
-from datetime import datetime, time
+from datetime import datetime, time, date as dt_date
 from django.db.models import Sum, Count
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.http import Http404, JsonResponse
 import os, requests
 from django.db.models.functions import TruncDate
+from django.utils.dateparse import parse_date
 
 @login_required(login_url='/login')
 def home(request):
@@ -159,6 +160,12 @@ def foodDiary(request):
 
 @login_required(login_url='/login')
 def exerciseDiary(request):
+    date = request.GET.get('date')
+    if date:
+        date = parse_date(date)
+    else:
+        date = dt_date.today()
+
     if request.method == 'POST':
         form = datePicker(request.POST)
         if form.is_valid():
@@ -184,9 +191,11 @@ def exerciseDiary(request):
                     # Redirect to refresh the page without the deleted entry
                     return render(request, 'main/exerciseDiary.html', {'form':form, 'todaysExercises':todaysExercises})
     else:
-        form = datePicker()
+        form = datePicker(initial={'date': date})
 
     return render(request, 'main/exerciseDiary.html', {'form': form})
+
+
 
 @login_required(login_url='/login')
 def add_Exercise(request):
