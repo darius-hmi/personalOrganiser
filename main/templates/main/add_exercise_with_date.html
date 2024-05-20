@@ -144,5 +144,24 @@ document.getElementById('id_muscle').addEventListener('change', function() {
         exerciseSelect.value = '';
     }
 });
+
+function getMuscleGroup(exercise) {
+    // Define a function to get the muscle group based on the exercise name
+    // Add your logic to determine the muscle group for each exercise
+    // This is a simple example, you may need to adjust it based on your actual data
+    if (chestExercises.includes(exercise)) {
+        return 'Chest';
+    } else if (shoulderExercises.includes(exercise)) {
+        return 'Shoulder';
+    } else if (legExercises.includes(exercise)) {
+        return 'Legs';
+    } else if (backExercises.includes(exercise)) {
+        return 'Back';
+    } else if (armExercises.includes(exercise)) {
+        return 'Arms';
+    } else {
+        return ''; // Default to empty string if muscle group is unknown
+    }
+};
 </script>
 {% endblock %}
