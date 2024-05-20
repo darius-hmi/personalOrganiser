@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RegisterForm, PostForm, FoodForm, datePicker, ExerciseForm, toDoForm, MessageForm
+from .forms import RegisterForm, PostForm, FoodForm, datePicker, ExerciseForm, toDoForm, MessageForm, ProfileForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Post, Food, Exercise, toDoList, Message, Thread
+from .models import Post, Food, Exercise, toDoList, Message, Thread, Profile
 from datetime import datetime, time, date as dt_date
 from django.db.models import Sum, Count
 from django.core.mail import send_mail
@@ -24,6 +24,18 @@ def home(request):
                 post.delete()
     posts = Post.objects.all()
     return render(request, 'main/home.html', {"posts": posts}) 
+
+@login_required
+def profile_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'main/profile.html', {'form': form})
 
 
 
@@ -119,6 +131,10 @@ def create_food(request):
 
 @login_required(login_url='/login')
 def foodDiary(request):
+    profile = get_object_or_404(Profile, user=request.user)
+    totalCaloriesGoal = profile.total_calories_goal
+    totalProteinGoal = profile.total_protein_goal
+
     if request.method == 'POST':
         form = datePicker(request.POST)
         if form.is_valid():
@@ -129,7 +145,14 @@ def foodDiary(request):
             totalCalories = todaysFoods.aggregate(Sum('calories'))['calories__sum']
             totalProtein = todaysFoods.aggregate(Sum('protein'))['protein__sum']
 
-            return render(request, 'main/foodDiary.html', {'form': form, 'todaysFoods': todaysFoods, 'totalCalories': totalCalories, 'totalProtein': totalProtein})
+            return render(request, 'main/foodDiary.html', {
+                'form': form,
+                'todaysFoods': todaysFoods,
+                'totalCalories': totalCalories,
+                'totalProtein': totalProtein,
+                'totalCaloriesGoal': totalCaloriesGoal,
+                'totalProteinGoal': totalProteinGoal,
+            })
 
         # Handle delete action
         form_type = request.POST.get('form-type')
@@ -149,12 +172,23 @@ def foodDiary(request):
                     totalCalories = todaysFoods.aggregate(Sum('calories'))['calories__sum']
                     totalProtein = todaysFoods.aggregate(Sum('protein'))['protein__sum']
                     # Redirect to refresh the page without the deleted entry
-                    return render(request, 'main/foodDiary.html', {'form': form, 'todaysFoods': todaysFoods, 'totalCalories': totalCalories, 'totalProtein': totalProtein})
+                    return render(request, 'main/foodDiary.html', {
+                        'form': form,
+                        'todaysFoods': todaysFoods,
+                        'totalCalories': totalCalories,
+                        'totalProtein': totalProtein,
+                        'totalCaloriesGoal': totalCaloriesGoal,
+                        'totalProteinGoal': totalProteinGoal,
+                    })
 
     else:
         form = datePicker()
 
-    return render(request, 'main/foodDiary.html', {'form': form})
+    return render(request, 'main/foodDiary.html', {
+        'form': form,
+        'totalCaloriesGoal': totalCaloriesGoal,
+        'totalProteinGoal': totalProteinGoal,
+    })
 
 
 

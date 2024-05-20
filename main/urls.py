@@ -20,4 +20,5 @@ urlpatterns = [
     path('dm/<int:recipient_id>/', views.initiate_dm, name='initiate_dm'),
     path('initiate-dm/', views.initiate_dm, name='initiate_dm'),
     path('get_exercise_data/', views.get_exercise_data, name='get_exercise_data'),
+    path('profile/', views.profile_view, name='profile'),
 ]

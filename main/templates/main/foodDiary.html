@@ -1,6 +1,9 @@
 {% extends 'main/base.html' %}
 {% block title %}Food Diary{% endblock %}
 {% block content %}
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 <form method="post" action="/foodDiary">
     {% csrf_token %}{{form.as_p}}
     <input type="hidden" name="form-type" value="main-form">
@@ -39,4 +42,91 @@
         <th>{{totalProtein}}</th>
     </tr>
 </table>
+
+<div style="display: flex; justify-content: center;">
+  <div style="width: 300px; height: 300px; margin: 10px;">
+      <canvas id="caloriesChart"></canvas>
+  </div>
+  <div style="width: 300px; height: 300px; margin: 10px;">
+      <canvas id="proteinChart"></canvas>
+  </div>
+</div>
+
+
+
+<!-- Hidden elements to store the JSON data -->
+<div id="totalCalories" style="display: none;">{{ totalCalories|default:0 }}</div>
+<div id="totalCaloriesGoal" style="display: none;">{{ totalCaloriesGoal|default:0 }}</div>
+<div id="totalProtein" style="display: none;">{{ totalProtein|default:0 }}</div>
+<div id="totalProteinGoal" style="display: none;">{{ totalProteinGoal|default:0 }}</div>
+
+
+<script>
+window.onload = function() {
+    const totalCalories = JSON.parse(document.getElementById('totalCalories').textContent);
+    const totalCaloriesGoal = JSON.parse(document.getElementById('totalCaloriesGoal').textContent);
+    const totalProtein = JSON.parse(document.getElementById('totalProtein').textContent);
+    const totalProteinGoal = JSON.parse(document.getElementById('totalProteinGoal').textContent);
+
+    const caloriesChartCtx = document.getElementById('caloriesChart').getContext('2d');
+    const proteinChartCtx = document.getElementById('proteinChart').getContext('2d');
+
+    new Chart(caloriesChartCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Calories Consumed', 'Calories Remaining'],
+            datasets: [{
+                data: [totalCalories, Math.max(0, totalCaloriesGoal - totalCalories)],
+                backgroundColor: ['#FF6384', '#36A2EB'],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                text: 'Calories Consumption'
+            }//,
+            // plugins: {
+            //     legend: {
+            //         display: true,
+            //     },
+            //     tooltip: {
+            //         callbacks: {
+            //             label: function(context) {
+            //                 let label = context.label || '';
+            //                 if (label) {
+            //                     label += ': ';
+            //                 }
+            //                 label += Math.round(context.parsed * 100) + '%';
+            //                 return label;
+            //             }
+            //         }
+            //     }
+            // }
+        }
+    });
+
+    new Chart(proteinChartCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Protein Consumed', 'Protein Remaining'],
+            datasets: [{
+                data: [totalProtein, Math.max(0, totalProteinGoal - totalProtein)],
+                backgroundColor: ['#FF6384', '#36A2EB'],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                text: 'Protein Consumption'
+            }
+        }
+    });
+};
+</script>
+  
+
 {% endblock %}
