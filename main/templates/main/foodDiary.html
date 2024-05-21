@@ -4,12 +4,12 @@
 <head>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<form method="post" action="/foodDiary">
+<form method="post" action="/foodDiary" style="text-align:center">
     {% csrf_token %}{{form.as_p}}
     <input type="hidden" name="form-type" value="main-form">
     <button type="submit" name="save">Go</button>
 </form>
-<table style="width:100%">
+<table style="width:100%;text-align:center">
     <tr>
       <th>Food</th>
       <th>Calories</th>
@@ -43,11 +43,11 @@
     </tr>
 </table>
 
-<div style="display: flex; justify-content: center;">
-  <div style="width: 300px; height: 300px; margin: 10px;">
+<div class="chart-container">
+  <div class="chart-wrapper">
       <canvas id="caloriesChart"></canvas>
   </div>
-  <div style="width: 300px; height: 300px; margin: 10px;">
+  <div class="chart-wrapper">
       <canvas id="proteinChart"></canvas>
   </div>
 </div>
@@ -86,7 +86,7 @@ window.onload = function() {
             title: {
                 display: true,
                 text: 'Calories Consumption'
-            }//,
+            }//, add the below if you want to add percentage
             // plugins: {
             //     legend: {
             //         display: true,

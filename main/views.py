@@ -37,29 +37,6 @@ def profile_view(request):
         form = ProfileForm(instance=profile)
     return render(request, 'main/profile.html', {'form': form})
 
-
-
-@login_required(login_url='/login')
-def todaysFood(request):
-    author = request.user
-    todaysFoods = Food.objects.filter(author=author, created_at__date=datetime.today().date())
-    totalCalories = todaysFoods.aggregate(Sum('calories'))['calories__sum']
-    totalProtein = todaysFoods.aggregate(Sum('protein'))['protein__sum']
-
-
-    if request.method == 'POST':
-        food_id = request.POST.get('food-id')
-        food = Food.objects.filter(id=food_id).first()
-        food.delete()
-        todaysFoods = Food.objects.filter(author=author, created_at__date=datetime.today().date())
-        totalCalories = todaysFoods.aggregate(Sum('calories'))['calories__sum']
-        totalProtein = todaysFoods.aggregate(Sum('protein'))['protein__sum']
-
-
-    return render(request, 'main/todaysFood.html', {'todaysFoods':todaysFoods, 'totalCalories':totalCalories, 'totalProtein':totalProtein}) 
-
-
-
 @login_required(login_url='/login')
 def create_post(request):
     if request.method == 'POST':
@@ -80,6 +57,9 @@ def create_food(request):
     form = FoodForm()
     food_info = None
     error_message = None
+    profile = get_object_or_404(Profile, user=request.user)
+    totalCaloriesGoal = profile.total_calories_goal
+    totalProteinGoal = profile.total_protein_goal
 
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -92,7 +72,16 @@ def create_food(request):
                 food.author = request.user
                 food.save()
                 return redirect('create_food')
-        
+        elif action == 'delete_food':
+            # Handle food deletion
+            food_id = request.POST.get('food-id')
+            if food_id:
+                food = Food.objects.filter(id=food_id).first()
+                if food:
+                    food.delete()
+                    # Redirect to the same page to refresh the list
+                    return redirect('create_food')
+                
         elif action == 'food_lookup':
             # Handle the food lookup form
             form = FoodForm()
@@ -125,7 +114,21 @@ def create_food(request):
     else:
         form = FoodForm()
 
-    return render(request, 'main/create_food.html', {'form': form, 'food_info': food_info, 'error_message': error_message})
+    author = request.user
+    todaysFoods = Food.objects.filter(author=author, created_at__date=datetime.today().date())
+    totalCalories = todaysFoods.aggregate(Sum('calories'))['calories__sum']
+    totalProtein = todaysFoods.aggregate(Sum('protein'))['protein__sum']
+
+    return render(request, 'main/create_food.html', {
+        'form': form,
+        'food_info': food_info,
+        'error_message': error_message, 
+        'todaysFoods': todaysFoods,
+        'totalCalories': totalCalories, 
+        'totalProtein': totalProtein, 
+        'totalCaloriesGoal': totalCaloriesGoal,
+        'totalProteinGoal': totalProteinGoal,
+        })
 
 
 

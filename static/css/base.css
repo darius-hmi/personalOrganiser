@@ -207,8 +207,27 @@ body {
         font-size: 10px; /* Adjust as needed */
     }
 }
-
-
-
-
+.chart-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.chart-wrapper {
+    flex: 1 1 300px;
+    max-width: 500px; /* Limit the maximum width on larger screens */
+    padding: 10px;
+    box-sizing: border-box;
+}
+canvas {
+    width: 100% !important;
+    height: auto !important;
+}
+.form-container {
+    text-align: center;
+}
+.form-table {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center items vertically */
+}
 /* Add other CSS styles for your elements */

@@ -7,7 +7,6 @@ urlpatterns = [
     #path('sign-up', views.sign_up, name='sign_up'),
     path('create-post', views.create_post, name='create_post'),
     path('create-food', views.create_food, name='create_food'),
-    path('todaysFood', views.todaysFood, name='todaysFood'),
     path('foodDiary', views.foodDiary, name='foodDiary'),
     path('addExercise', views.add_Exercise, name='add_Exercise'),
     path('exerciseDiary', views.exerciseDiary, name='exerciseDiary'),
