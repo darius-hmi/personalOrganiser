@@ -20,4 +20,9 @@ urlpatterns = [
     path('initiate-dm/', views.initiate_dm, name='initiate_dm'),
     path('get_exercise_data/', views.get_exercise_data, name='get_exercise_data'),
     path('profile/', views.profile_view, name='profile'),
+    path('meal-plans/', views.meal_plan_page, name='meal_plan_page'),
+    path('meal-plans/create/', views.create_meal_plan, name='create_meal_plan'),
+    path('meal-plans/<int:meal_plan_id>/add-meal/', views.add_meal, name='add_meal'),
+    path('meal-plans/<int:meal_plan_id>/delete/', views.delete_meal_plan, name='delete_meal_plan'),
+    path('meal-plans/<int:meal_plan_id>/meals/<int:meal_id>/delete/', views.delete_meal, name='delete_meal'),
 ]

@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RegisterForm, PostForm, FoodForm, datePicker, ExerciseForm, toDoForm, MessageForm, ProfileForm
+from .forms import RegisterForm, PostForm, FoodForm, datePicker, ExerciseForm, toDoForm, MessageForm, ProfileForm, MealForm, MealPlanForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Post, Food, Exercise, toDoList, Message, Thread, Profile
+from .models import Post, Food, Exercise, toDoList, Message, Thread, Profile, MealPlan, Meal
 from datetime import datetime, time, date as dt_date
 from django.db.models import Sum, Count
 from django.core.mail import send_mail
@@ -406,6 +406,60 @@ def thread_detail_view(request, thread_id):
             message.save()
             return redirect('thread_detail', thread_id=thread.id)
     return render(request, 'main/thread_detail.html', {'thread': thread, 'messages': messages, 'form': form})
+
+
+
+@login_required(login_url='/login')
+def meal_plan_page(request):
+    meal_plans = MealPlan.objects.filter(user=request.user)
+    meal_plan_form = MealPlanForm()
+    meal_form = MealForm()
+    return render(request, 'main/meal_plan_page.html', {
+        'meal_plans': meal_plans,
+        'meal_plan_form': meal_plan_form,
+        'meal_form': meal_form,
+    })
+
+@login_required(login_url='/login')
+def create_meal_plan(request):
+    if request.method == 'POST':
+        form = MealPlanForm(request.POST)
+        if form.is_valid():
+            meal_plan = form.save(commit=False)
+            meal_plan.user = request.user
+            meal_plan.save()
+            return JsonResponse({'status': 'success', 'meal_plan': {'id': meal_plan.id, 'name': meal_plan.name}})
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors})
+
+@login_required(login_url='/login')
+def add_meal(request, meal_plan_id):
+    meal_plan = get_object_or_404(MealPlan, id=meal_plan_id, user=request.user)
+    if request.method == 'POST':
+        form = MealForm(request.POST)
+        if form.is_valid():
+            meal = form.save(commit=False)
+            meal.meal_plan = meal_plan
+            meal.save()
+            return JsonResponse({'status': 'success', 'meal': {'day_of_week': meal.day_of_week, 'name': meal.meal_time,'contents': meal.meal_content, 'calories': meal.calories, 'protein': meal.protein}})
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors})
+
+
+def delete_meal_plan(request, meal_plan_id):
+    meal_plan = get_object_or_404(MealPlan, pk=meal_plan_id)
+    if request.method == 'POST':
+        meal_plan.delete()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+def delete_meal(request, meal_plan_id, meal_id):
+    meal = get_object_or_404(Meal, pk=meal_id)
+    if request.method == 'POST':
+        meal.delete()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
 
 
 #end of the code

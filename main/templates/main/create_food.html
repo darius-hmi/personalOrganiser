@@ -95,7 +95,11 @@
   <div id="totalCaloriesGoal" style="display: none;">{{ totalCaloriesGoal|default:0 }}</div>
   <div id="totalProtein" style="display: none;">{{ totalProtein|default:0 }}</div>
   <div id="totalProteinGoal" style="display: none;">{{ totalProteinGoal|default:0 }}</div>
-  
+
+
+<div style="text-align:center">
+    <a href="{% url 'meal_plan_page' %}">View Meal Plans</a>
+</div>
   
   <script>
   window.onload = function() {

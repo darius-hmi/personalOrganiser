@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Post, Food, Exercise, toDoList, Message, Profile
+from .models import Post, Food, Exercise, toDoList, Message, Profile, Meal, MealPlan
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -52,3 +52,14 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['weight', 'height', 'total_protein_goal', 'total_calories_goal']
+
+class MealPlanForm(forms.ModelForm):
+    class Meta:
+        model = MealPlan
+        fields = ['name']
+
+class MealForm(forms.ModelForm):
+    class Meta:
+        model = Meal
+        fields = ['day_of_week', 'meal_time', 'meal_content', 'calories', 'protein']
+        labels = {'meal_time': 'Meal time/number'}

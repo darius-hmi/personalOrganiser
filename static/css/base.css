@@ -230,4 +230,17 @@ canvas {
     justify-content: center;
     align-items: center; /* Center items vertically */
 }
+
+.meal-plans-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.meal-plan {
+    flex: 0 0 calc(33.33% - 20px); /* Adjust the percentage to your liking */
+    margin: 10px;
+    /* Additional styling for each meal plan */
+}
+
 /* Add other CSS styles for your elements */
