@@ -161,7 +161,6 @@ class Meal(models.Model):
     day_of_week = models.CharField(max_length=10, choices=DAY_CHOICES)
     meal_time = models.CharField(max_length=100)
     meal_content = models.CharField(max_length=100)
-    meal_plan = models.ForeignKey(MealPlan, on_delete=models.CASCADE, related_name='meals')
     calories = models.DecimalField(max_digits=5, decimal_places=2)
     protein = models.DecimalField(max_digits=5, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
