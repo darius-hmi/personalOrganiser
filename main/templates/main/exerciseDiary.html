@@ -1,58 +1,88 @@
 {% extends 'main/base.html' %}
 {% block title %}Exercise Diary{% endblock %}
 {% block content %}
-<form method="post" action="/exerciseDiary" id="exercise-diary-form", class="form-container">
-    {% csrf_token %}{{form.as_p}}
+<form method="post" action="/exerciseDiary" id="exercise-diary-form" class="form-container">
+    {% csrf_token %}
+    {{ form.as_p }}
     <button type="submit" name="save">Go</button>
 </form>
 <table style="width:100%; text-align:center">
     <tr>
-      <th>Exercise</th>
-      <th>Body Part</th>
-      <th>Weight</th>
-      <th>Sets</th>
-      <th>reps</th>
-      <th>Date and Time</th>
-      <th>
-        {% if form.cleaned_data.date %}
-          <a href="{% url 'add_exercise_with_date' date=form.cleaned_data.date %}" class="btn btn-success">Add Exercise Entry</a>
-        {% endif %}
-      </th>
+        <th>Exercise</th>
+        <th>Body Part</th>
+        <th>Weight</th>
+        <th>Sets</th>
+        <th>Reps</th>
+        <th>Date and Time</th>
+        <th>
+          {% if form.cleaned_data.date %}
+            <a href="{% url 'add_exercise_with_date' date=form.cleaned_data.date %}" class="btn btn-success">Add Exercise Entry</a>
+          {% endif %}
+        </th>
     </tr>
     {% for exercise in todaysExercises %}
     <tr>
-      <td>{{exercise.name}}</td>
-      <td>{{exercise.muscle}}</td>
-      <td>{{exercise.weight}}</td>
-      <td>{{exercise.sets}}</td>
-      <td>{{exercise.reps}}</td>
-      <td>{{exercise.created_at}}</td>
-      <td>
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="form-type" value="delete-form">
-            <button type="submit" class="btn btn-danger" name="exercise-id" value="{{exercise.id}}">Delete</button>
-        </form>
-      </td>
+        <td>{{ exercise.name }}</td>
+        <td>{{ exercise.muscle }}</td>
+        <td id="weight-{{ exercise.id }}">{{ exercise.weight }}</td>
+        <td id="sets-{{ exercise.id }}">{{ exercise.sets }}</td>
+        <td id="reps-{{ exercise.id }}">{{ exercise.reps }}</td>
+        <td>{{ exercise.created_at }}</td>
+        <td>
+            <button type="button" class="btn btn-primary" onclick="editExercise('{{ exercise.id }}')">Edit</button>
+            <form method="post" style="display:inline">
+                {% csrf_token %}
+                <input type="hidden" name="form-type" value="delete-form">
+                <button type="submit" class="btn btn-danger" name="exercise-id" value="{{ exercise.id }}" onclick="deleteExercise('{{ exercise.id }}')">Delete</button>
+            </form>
+            <form method="post" style="display:none;" id="edit-form-{{ exercise.id }}">
+                {% csrf_token %}
+                <input type="hidden" name="form-type" value="edit-form">
+                <input type="hidden" name="exercise-id" value="{{ exercise.id }}">
+                <input type="number" name="weight" value="{{ exercise.weight }}" placeholder="Weight">
+                <input type="number" name="sets" value="{{ exercise.sets }}" placeholder="Sets">
+                <input type="number" name="reps" value="{{ exercise.reps }}" placeholder="Reps">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="cancelEdit('{{ exercise.id }}')">Cancel</button>
+            </form>
+        </td>
     </tr>
     {% endfor %}
 </table>
 
 <script>
+function editExercise(exerciseId) {
+    var selectedDate = document.getElementById('id_date').value;
+    sessionStorage.setItem('selectedDate', selectedDate);
+    document.getElementById('edit-form-' + exerciseId).style.display = 'inline';
+    
+}
+
+function cancelEdit(exerciseId) {
+    document.getElementById('edit-form-' + exerciseId).style.display = 'none';
+}
+
+function deleteExercise(exerciseId) {
+    // Save the selected date in session storage before deleting the exercise
+    var selectedDate = document.getElementById('id_date').value;
+    sessionStorage.setItem('selectedDate', selectedDate);
+}
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Retrieve the selected date from sessionStorage
     var selectedDate = sessionStorage.getItem('selectedDate');
     if (selectedDate) {
         var formattedDate = selectedDate.split('/').reverse().join('-');
         document.getElementById('id_date').value = formattedDate;
-        // Clear the selected date from sessionStorage
         sessionStorage.removeItem('selectedDate');
-        // Submit the form
         document.getElementById('exercise-diary-form').submit();
     }
 });
-
-
+document.addEventListener('DOMContentLoaded', function() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var date = urlParams.get('date');
+    if (date) {
+        document.getElementById('id_date').value = date;
+    }
+});
 </script>
 {% endblock %}

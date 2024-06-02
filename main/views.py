@@ -12,6 +12,7 @@ from django.http import Http404, JsonResponse
 import os, requests
 from django.db.models.functions import TruncDate
 from django.utils.dateparse import parse_date
+from django.urls import reverse
 
 @login_required(login_url='/login')
 def home(request):
@@ -194,7 +195,6 @@ def foodDiary(request):
     })
 
 
-
 @login_required(login_url='/login')
 def exerciseDiary(request):
     date = request.GET.get('date')
@@ -204,13 +204,22 @@ def exerciseDiary(request):
         date = dt_date.today()
 
     if request.method == 'POST':
+        if 'form-type' in request.POST and request.POST['form-type'] == 'edit-form':
+            exercise_id = request.POST.get('exercise-id')
+            exercise = get_object_or_404(Exercise, id=exercise_id)
+            exercise.weight = request.POST.get('weight')
+            exercise.sets = request.POST.get('sets')
+            exercise.reps = request.POST.get('reps')
+            exercise.save()
+            return redirect('exerciseDiary')
+
         form = datePicker(request.POST)
         if form.is_valid():
             # Handle datePicker form submission
             d = form.cleaned_data['date']
             author = request.user
             todaysExercises = Exercise.objects.filter(author=author, created_at__date=d)
-            return render(request, 'main/exerciseDiary.html', {'form':form, 'todaysExercises':todaysExercises})
+            return render(request, 'main/exerciseDiary.html', {'form': form, 'todaysExercises': todaysExercises})
 
         # Handle delete action
         form_type = request.POST.get('form-type')
@@ -225,13 +234,13 @@ def exerciseDiary(request):
                 if exercise_to_delete:
                     exercise_to_delete.delete()
                     todaysExercises = Exercise.objects.filter(author=author, created_at__date=d)
-                    # Redirect to refresh the page without the deleted entry
-                    return render(request, 'main/exerciseDiary.html', {'form':form, 'todaysExercises':todaysExercises})
+                    return render(request, 'main/exerciseDiary.html', {'form': form, 'todaysExercises': todaysExercises})
     else:
         form = datePicker(initial={'date': date})
 
-    return render(request, 'main/exerciseDiary.html', {'form': form})
-
+    author = request.user
+    todaysExercises = Exercise.objects.filter(author=author, created_at__date=date)
+    return render(request, 'main/exerciseDiary.html', {'form': form, 'todaysExercises': todaysExercises})
 
 
 @login_required(login_url='/login')
@@ -342,7 +351,7 @@ def add_exerciseToDate(request, date):
         exercise.author = request.user
         exercise.created_at = datetime.combine(date_obj, datetime.min.time())
         exercise.save()
-        return redirect('exerciseDiary')
+        return redirect(reverse('exerciseDiary') + '?date=' + date)
     else:
         form = ExerciseForm()
 
