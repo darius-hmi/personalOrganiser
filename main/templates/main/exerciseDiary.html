@@ -15,9 +15,7 @@
         <th>Reps</th>
         <th>Date and Time</th>
         <th>
-          {% if form.cleaned_data.date %}
-            <a href="{% url 'add_exercise_with_date' date=form.cleaned_data.date %}" class="btn btn-success">Add Exercise Entry</a>
-          {% endif %}
+            <a id="add-exercise-entry-btn" class="btn btn-success">Add Exercise Entry</a>
         </th>
     </tr>
     {% for exercise in todaysExercises %}
@@ -82,6 +80,22 @@ document.addEventListener('DOMContentLoaded', function() {
     var date = urlParams.get('date');
     if (date) {
         document.getElementById('id_date').value = date;
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    var addExerciseBtn = document.getElementById('add-exercise-entry-btn');
+    var dateInput = document.getElementById('id_date');
+    
+    if (addExerciseBtn && dateInput) {
+        addExerciseBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default link behavior
+            
+            var dateValue = dateInput.value;
+            if (dateValue) {
+                var url = '/exerciseDiary/add/' + dateValue + '/';
+                window.location.href = url; // Redirect to the desired URL
+            }
+        });
     }
 });
 </script>
