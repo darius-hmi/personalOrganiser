@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RegisterForm, PostForm, FoodForm, datePicker, ExerciseForm, toDoForm, MessageForm, ProfileForm, MealForm, MealPlanForm
+from .forms import RegisterForm, PostForm, FoodForm, datePicker, ExerciseForm, toDoForm, MessageForm, ProfileForm, MealForm, MealPlanForm, ExpenseForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import Post, Food, Exercise, toDoList, Message, Thread, Profile, MealPlan, Meal
+from .models import Post, Food, Exercise, toDoList, Message, Thread, Profile, MealPlan, Meal, Expense
 from datetime import datetime, time, date as dt_date
 from django.db.models import Sum, Count
 from django.core.mail import send_mail
@@ -470,5 +470,19 @@ def delete_meal(request, meal_plan_id, meal_id):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
 
+@login_required(login_url='/login')
+def budget_page(request):
+    if request.method == 'POST':
+        form = ExpenseForm(request.POST)
+        if form.is_valid():
+            expense = form.save(commit=False)
+            expense.user = request.user
+            expense.save()
+            return redirect('budget_page')
+    else:
+        form = ExpenseForm()
+    
+    expenses = Expense.objects.filter(user=request.user)
+    return render(request, 'main/budget.html', {'form': form, 'expenses': expenses})
 
 #end of the code, test
